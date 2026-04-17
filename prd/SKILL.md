@@ -15,8 +15,9 @@ Create detailed Product Requirements Documents that are clear, actionable, and s
 2. Ask 3-5 essential clarifying questions (with lettered options)
 3. Generate a structured PRD based on answers
 4. Save to `plan/tasks/prd-[feature-name].md`
+5. **Update `AGENTS.md` § Backlog** — add a bullet for this feature pointing to its PRD file
 
-**Important:** Do NOT start implementing. Just create the PRD.
+**Important:** Do NOT start implementing. Just create the PRD and update the backlog.
 
 ---
 
@@ -139,6 +140,25 @@ Describe the testing approach before implementation begins:
 - **Failing tests to write first:** bullet list — one per user story — matching the "Failing test" block on each US
 - **Coverage targets:** which behaviors are unit-tested vs. integration vs. browser-verified
 - **Exceptions:** stories skipping test-first (CSS-only, pure refactor, etc.) — state why per story
+
+### 7c. Endpoint & Data-Source Declaration (required)
+
+Prevent autonomous execution from inventing endpoints or data sources that don't exist. Every PRD must explicitly declare:
+
+| Category                      | Resource                          | Status         | Notes                           |
+| ----------------------------- | --------------------------------- | -------------- | ------------------------------- |
+| **Endpoints WILL use**        | `/api/tasks`                      | ✅ Existing    | GET/POST for task CRUD          |
+| **Endpoints WILL create**     | `/api/tasks/:id/priority`         | 🔨 New         | PATCH for priority updates      |
+| **Endpoints MUST NOT invent** | `/api/workbench/tasks`            | ❌ Forbidden   | Use `/api/tasks` instead        |
+| **Content Collections**       | `tasks`                           | ✅ Existing    | Query for task metadata         |
+| **Fixture Files**             | `shared/data/fixtures/tasks.json` | ✅ Will modify | Add priority field to mock data |
+
+**Guidelines:**
+
+- **Existing resources:** Mark with ✅ — no creation needed
+- **New resources:** Mark with 🔨 — PRD must specify creation in user stories
+- **Forbidden patterns:** Mark with ❌ — prevent accidental invention of similar-sounding endpoints
+- **Rationale:** This table forces explicit design decisions and prevents Ralph from hallucinating `/api/workbench/hcps` when the actual endpoint is `/api/hcp`
 
 ### 8. Success Metrics
 
@@ -295,6 +315,8 @@ Before saving the PRD:
 - [ ] User stories are small and specific
 - [ ] **Every story has a "Failing test (write first)" block, or a one-line note explaining why it's exempt**
 - [ ] **Test Strategy section present** (runner, locations, per-story failing tests, exceptions)
+- [ ] **Every endpoint the feature touches is listed in §7c Endpoint & Data-Source Declaration** (existing/new/forbidden, plus content collections and fixture files)
 - [ ] Functional requirements are numbered and unambiguous
 - [ ] Non-goals section defines clear boundaries
+- [ ] **Review AGENTS.md "Agent gotchas" section** — include relevant constraints in Technical Considerations (e.g., kebab-case filenames, Nuxt UI API quirks, conformance tests). This prevents Ralph from wasting iterations on known issues.
 - [ ] Saved to `plan/tasks/prd-[feature-name].md`
